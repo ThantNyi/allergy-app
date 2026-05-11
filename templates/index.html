@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Allergy Checker</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #fdf6f0 0%, #f9f0f5 50%, #f0f4fd 100%);
+            min-height: 100vh;
+        }
+
+        /* HERO HEADER */
+        .hero {
+            width: 100%;
+            height: 350px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            object-position: center;
+        }
+
+        /* MAIN CONTENT CARD */
+        .container {
+            max-width: 680px;
+            margin: 30px auto 60px;
+            padding: 0 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.10), 0 1.5px 6px rgba(0,0,0,0.06);
+            padding: 36px 36px 40px;
+        }
+
+        .card-title {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .card-title h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #2d2b45;
+            margin-bottom: 6px;
+        }
+
+        .card-title p {
+            font-size: 14px;
+            color: #9b8fbf;
+        }
+
+        /* SEARCH ROW */
+        .search-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-row input[type="text"] {
+            flex: 1;
+            padding: 13px 18px;
+            font-size: 16px;
+            border: 1.5px solid #e2e0f0;
+            border-radius: 12px;
+            background: #fafafa;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+            color: #333;
+        }
+
+        .search-row input[type="text"]:focus {
+            border-color: #a78bfa;
+            box-shadow: 0 0 0 3px rgba(167,139,250,0.15);
+            background: #fff;
+        }
+
+        .btn-search {
+            padding: 13px 22px;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #a78bfa, #818cf8);
+            color: #fff;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            white-space: nowrap;
+        }
+
+        .btn-search:hover { opacity: 0.88; }
+        .btn-search:active { transform: scale(0.97); }
+
+        .btn-filter {
+            padding: 13px 18px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 1.5px solid #e2e0f0;
+            border-radius: 12px;
+            background: #fff;
+            color: #6d6a85;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-filter:hover {
+            border-color: #a78bfa;
+            background: #f5f0ff;
+            color: #7c3aed;
+        }
+
+        /* DIVIDER */
+        .divider {
+            border: none;
+            border-top: 1.5px solid #f0eef8;
+            margin: 28px 0;
+        }
+
+        /* RESULTS */
+        .result {
+            font-size: 16px;
+        }
+
+        .dish-card {
+            background: #faf9ff;
+            border: 1.5px solid #ede9f9;
+            border-radius: 14px;
+            padding: 20px 22px;
+            margin-bottom: 16px;
+        }
+
+        .dish-card h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d2b45;
+            margin-bottom: 6px;
+        }
+
+        .dish-card .category {
+            font-size: 13px;
+            color: #9b8fbf;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
+        .warning {
+            color: #c0392b;
+            font-weight: 600;
+            background: #fff4f4;
+            border: 1px solid #f5c6c6;
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: inline-block;
+        }
+
+        .safe {
+            color: #1a7f4e;
+            font-weight: 600;
+            background: #f0fdf6;
+            border: 1px solid #b6eacf;
+            border-radius: 8px;
+            padding: 8px 14px;
+            display: inline-block;
+        }
+
+        .not-found {
+            text-align: center;
+            padding: 30px 0 10px;
+            color: #c0392b;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background: #ffffff;
+            overflow-x: hidden;
+            transition: 0.3s cubic-bezier(.4,0,.2,1);
+            padding-top: 60px;
+            box-shadow: 4px 0 24px rgba(120,100,200,0.13);
+            z-index: 100;
+            border-right: 1.5px solid #ede9f9;
+        }
+
+        .sidebar-content {
+            padding: 24px;
+            text-align: left;
+            width: 260px;
+        }
+
+        .sidebar-content h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2d2b45;
+            margin-bottom: 18px;
+        }
+
+        .mode-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .mode-row label {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 9px 0;
+            border: 1.5px solid #e2e0f0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #6d6a85;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-row input[type="radio"] {
+            accent-color: #a78bfa;
+        }
+
+        .mode-row label:has(input:checked) {
+            border-color: #a78bfa;
+            background: #f5f0ff;
+            color: #7c3aed;
+        }
+
+        .sidebar-divider {
+            border: none;
+            border-top: 1.5px solid #f0eef8;
+            margin: 4px 0 14px;
+        }
+
+        .filter-option {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+            font-size: 15px;
+            color: #4a4768;
+            width: 100%;
+            gap: 10px;
+        }
+
+        .sidebar input[type="checkbox"] {
+            margin: 0;
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #a78bfa;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            font-size: 28px;
+            cursor: pointer;
+            color: #9b8fbf;
+            line-height: 1;
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover { color: #7c3aed; }
+
+        .sidebar-apply-btn {
+            margin-top: 24px;
+            width: 100%;
+            padding: 12px 0;
+            font-size: 15px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #a78bfa, #818cf8);
+            color: #fff;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .sidebar-apply-btn:hover { opacity: 0.88; }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- HERO HEADER -->
+    <div class="hero">
+        <img src="{{ url_for('static', filename='images/old_town_h.png') }}" alt="Restaurant header">
+    </div>
+
+    <!-- ONE FORM wrapping sidebar + main content -->
+    <form method="POST" id="searchForm">
+
+        <!-- SIDEBAR inside the form so inputs are submitted -->
+        <div id="sidebar" class="sidebar">
+            <span class="close-btn" onclick="closeSidebar()">&times;</span>
+            <div class="sidebar-content">
+                <h2>Filters</h2>
+
+                <div class="mode-row">
+                    <label>
+                        <input type="radio" name="filter_mode" value="with" checked>
+                        WITH
+                    </label>
+                    <label>
+                        <input type="radio" name="filter_mode" value="without">
+                        WITHOUT
+                    </label>
+                </div>
+
+                <hr class="sidebar-divider">
+
+                {% for allergen in allergens %}
+                <label class="filter-option">
+                    <span>{{ allergen }}</span>
+                    <input type="checkbox" name="allergens" value="{{ allergen }}">
+                </label>
+                {% endfor %}
+
+                <button type="button" class="sidebar-apply-btn" onclick="closeSidebar()">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- MAIN CARD -->
+        <div class="container">
+            <div class="card">
+
+                <div class="card-title">
+                    <h1>🍽️ Restaurant Allergy Checker</h1>
+                    <p>Search any dish to see what allergens it contains</p>
+                </div>
+
+                <div class="search-row">
+                    <input
+                        type="text"
+                        name="dish"
+                        placeholder="Search for a dish..."
+                        value="{{ dish_name }}"
+                    >
+                    <button type="submit" class="btn-search">Search</button>
+                    <button type="button" class="btn-filter" onclick="openSidebar()">⚙️ Filter</button>
+                </div>
+
+                {% if result %}
+                    <hr class="divider">
+                    <div class="result">
+                        {% if result.found %}
+                            {% for item in result.dishes %}
+                                <div class="dish-card">
+                                    <h2>{{ item.dish }}</h2>
+                                    <p class="category">{{ item.category }}</p>
+                                    {% if item.allergens %}
+                                        <span class="warning">⚠️ Contains: {{ item.allergens | join(", ") }}</span>
+                                    {% else %}
+                                        <span class="safe">✅ No major allergens</span>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <p class="not-found">❌ Dish not found</p>
+                        {% endif %}
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+
+    </form>
+
+    <script>
+        function openSidebar() {
+            document.getElementById("sidebar").style.width = "300px";
+        }
+        function closeSidebar() {
+            document.getElementById("sidebar").style.width = "0";
+        }
+    </script>
+
+</body>
+</html>
